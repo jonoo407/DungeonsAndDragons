@@ -26,6 +26,10 @@ export const abilityScoreLabels: Record<AbilityScoreKey, string> = {
   charisma: "Charisma",
 }
 
+export const abilityScoreDefaultValue = 10
+
+export const defaultDiceExpression = "4d6"
+
 export type DiceMethodId =
   | "custom_expression"
   | "four_d6_drop_lowest"
@@ -37,3 +41,11 @@ export interface DiceMethodMeta {
   label: string
   description: string
 }
+
+export const diceMethodIds: DiceMethodId[] = [
+  "custom_expression",
+  "four_d6_drop_lowest",
+  "three_d6",
+  "three_d6_reroll_ones",
+]
+

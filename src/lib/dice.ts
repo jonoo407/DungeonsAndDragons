@@ -6,7 +6,27 @@ export type RandomFn = () => number
 interface DiceMethodConfig {
   meta: DiceMethodMeta
   canAutoRoll: boolean
-  roll: (random?: RandomFn) => number[]
+  roll: (options?: RollOptions) => number[] | null
+}
+
+interface DiceTerm {
+  kind: "dice"
+  count: number
+  sides: number
+  sign: number
+}
+
+interface ConstantTerm {
+  kind: "constant"
+  value: number
+  sign: number
+}
+
+type ParsedDiceExpression = Array<DiceTerm | ConstantTerm>
+
+export interface RollOptions {
+  random?: RandomFn
+  expression?: string
 }
 
 const defaultRandom: RandomFn = () => Math.random()
@@ -34,15 +54,113 @@ const roll3d6RerollOnes = (random: RandomFn = defaultRandom) => {
   return dice.reduce((total, current) => total + current, 0)
 }
 
+const MAX_DICE_COUNT = 100
+const MAX_DICE_SIDES = 1000
+
+const DICE_TOKEN_REGEX = /^([0-9]*)d([0-9]+)$/i
+
+export const parseDiceExpression = (expression: string): ParsedDiceExpression | null => {
+  const sanitized = expression.replace(/\s+/g, "").toLowerCase()
+  if (!sanitized) {
+    return null
+  }
+
+  const tokens = sanitized.match(/([+-]?[^+-]+)/g)
+  if (!tokens) {
+    return null
+  }
+
+  const parsed: ParsedDiceExpression = []
+
+  for (const rawToken of tokens) {
+    if (!rawToken) {
+      return null
+    }
+
+    let token = rawToken
+    let sign = 1
+
+    if (token.startsWith("+")) {
+      token = token.slice(1)
+    } else if (token.startsWith("-")) {
+      sign = -1
+      token = token.slice(1)
+    }
+
+    if (!token) {
+      return null
+    }
+
+    const diceMatch = token.match(DICE_TOKEN_REGEX)
+    if (diceMatch) {
+      const countValue = diceMatch[1]
+      const sidesValue = diceMatch[2]
+
+      const count = countValue === "" ? 1 : Number.parseInt(countValue, 10)
+      const sides = Number.parseInt(sidesValue, 10)
+
+      if (!Number.isFinite(count) || !Number.isFinite(sides)) {
+        return null
+      }
+
+      if (count <= 0 || count > MAX_DICE_COUNT) {
+        return null
+      }
+
+      if (sides <= 1 || sides > MAX_DICE_SIDES) {
+        return null
+      }
+
+      parsed.push({ kind: "dice", count, sides, sign })
+      continue
+    }
+
+    const constantValue = Number.parseInt(token, 10)
+    if (!Number.isFinite(constantValue)) {
+      return null
+    }
+
+    parsed.push({ kind: "constant", value: constantValue, sign })
+  }
+
+  return parsed
+}
+
+const rollParsedExpression = (parsed: ParsedDiceExpression, random: RandomFn = defaultRandom) => {
+  let total = 0
+
+  for (const term of parsed) {
+    if (term.kind === "dice") {
+      for (let i = 0; i < term.count; i += 1) {
+        total += rollDie(term.sides, random) * term.sign
+      }
+    } else {
+      total += term.value * term.sign
+    }
+  }
+
+  return total
+}
+
+export const isDiceExpressionValid = (expression: string) => parseDiceExpression(expression) !== null
+
 const configs: Record<DiceMethodId, DiceMethodConfig> = {
   custom_expression: {
     meta: {
       id: "custom_expression",
       label: "Custom Expression",
-      description: "Enter any dice expression (e.g., 4d6+2) for manual rolls.",
+      description: "Enter any dice expression (e.g., 4d6+2) then roll for each score.",
     },
-    canAutoRoll: false,
-    roll: () => [],
+    canAutoRoll: true,
+    roll: (options = {}) => {
+      const { expression = "", random = defaultRandom } = options
+      const parsed = parseDiceExpression(expression)
+      if (!parsed) {
+        return null
+      }
+
+      return Array.from({ length: 6 }, () => rollParsedExpression(parsed, random))
+    },
   },
   four_d6_drop_lowest: {
     meta: {
@@ -51,7 +169,7 @@ const configs: Record<DiceMethodId, DiceMethodConfig> = {
       description: "Roll 4d6 per score; drop the lowest die before summing.",
     },
     canAutoRoll: true,
-    roll: (random = defaultRandom) =>
+    roll: ({ random = defaultRandom } = {}) =>
       Array.from({ length: 6 }, () => roll4d6DropLowest(random)),
   },
   three_d6: {
@@ -61,7 +179,7 @@ const configs: Record<DiceMethodId, DiceMethodConfig> = {
       description: "Roll 3d6 per score; classic old-school method.",
     },
     canAutoRoll: true,
-    roll: (random = defaultRandom) =>
+    roll: ({ random = defaultRandom } = {}) =>
       Array.from({ length: 6 }, () => roll3d6(random)),
   },
   three_d6_reroll_ones: {
@@ -71,7 +189,7 @@ const configs: Record<DiceMethodId, DiceMethodConfig> = {
       description: "Roll 3d6, reroll each die showing 1 until it is 2+.",
     },
     canAutoRoll: true,
-    roll: (random = defaultRandom) =>
+    roll: ({ random = defaultRandom } = {}) =>
       Array.from({ length: 6 }, () => roll3d6RerollOnes(random)),
   },
 }
@@ -82,15 +200,19 @@ export const getDiceMethod = (id: DiceMethodId) => configs[id]
 
 export const rollAbilityScores = (
   methodId: DiceMethodId,
-  random: RandomFn = defaultRandom,
+  options: RollOptions = {},
 ): AbilityScores | null => {
   const config = configs[methodId]
 
-  if (!config.canAutoRoll) {
+  if (!config) {
     return null
   }
 
-  const values = config.roll(random)
+  const values = config.roll(options)
+
+  if (!values) {
+    return null
+  }
 
   return abilityScoreKeys.reduce<AbilityScores>((accumulator, key, index) => {
     accumulator[key] = values[index] ?? 10

@@ -1,73 +1,36 @@
-# React + TypeScript + Vite
+# Dungeons & Dragons Character Sheet
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript application for crafting richly themed Dungeons & Dragons character sheets. The UI focuses on an enchanted journal aesthetic and prioritises fast iteration on core stats, identity details, and long-term sheet extensibility.
 
-Currently, two official plugins are available:
+## Project Highlights
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Ability score roller supporting classic methods and custom dice expressions with validation.
+- React Hook Form + Zod schema defining character identity and ability score structure.
+- Modular component layout (identity panel, ability roller, live score grid) ready for future combat, spellbook, and equipment sections.
+- Styling tuned for a parchment-inspired interface with responsive panels and reusable field primitives.
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Install dependencies: `npm install`
+2. Start the dev server: `npm run dev`
+3. Open `http://127.0.0.1:5173` to view the app. Hot reloading is enabled by default.
 
-## Expanding the ESLint configuration
+Recommended environment: Node.js 20+.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Key Commands
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- `npm run dev` — Launches the Vite dev server with hot module replacement.
+- `npm run build` — Type-checks via `tsc` and produces a production bundle.
+- `npm run preview` — Serves the built assets locally for smoke testing.
+- `npm run lint` — Runs the ESLint configuration supplied by the Vite React template.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Documentation Map
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `docs/architecture.md` — Component layout, state management, and dice utilities.
+- `docs/development.md` — Environment setup, workflow conventions, and testing guidance.
+- `docs/status.md` — Current milestone snapshot, open questions, and next steps for contributors.
+- `AGENTS.md` — Contributor workflow, coding standards, and pull request expectations.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Contributing
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+New collaborators should start with `AGENTS.md`, then review the deeper references under `docs/`. Issues, improvements, and questions can be captured in `docs/status.md` so future sessions pick up seamlessly.
