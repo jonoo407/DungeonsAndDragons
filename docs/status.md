@@ -23,11 +23,12 @@
 
 ## Next Steps
 
-1. **Form Expansion** - Add panels for skills, equipment, spellcasting, and session notes using the existing panel pattern.
-2. **Persistence** - Implement localStorage autosave + import/export of character JSON.
-3. **Validation Enhancements** - Extend dice parser for advanced mechanics (keep/drop dice, advantage/disadvantage) if required.
-4. **Testing** - Introduce Vitest + React Testing Library for dice utilities and form behaviour.
-5. **Design Polish** - Create a print-friendly layout or PDF export for completed sheets.
+1. **Class Selection Slice** - Introduce structured class data (base class list plus optional archetypes), extend `schema/character.ts` and form types, add a `ClassSelectionSection`, and propagate class defaults (hit dice, proficiency hints) into the combat panel.
+2. **Form Expansion** - Continue the panel pattern for skills, equipment, spellcasting, and session notes once class selection is stable.
+3. **Persistence** - Implement localStorage autosave plus import/export of character JSON for cross-session editing.
+4. **Validation Enhancements** - Extend dice parser for advanced mechanics (keep/drop dice, advantage/disadvantage) and ensure class-derived constraints stay coherent.
+5. **Testing** - Stand up Vitest plus React Testing Library, prioritising coverage for `ClassSelectionSection`, `schema/character.ts`, and existing dice utilities.
+6. **Design Polish** - Create a print-friendly layout or PDF export after the new panels land.
 
 ## Open Questions
 
