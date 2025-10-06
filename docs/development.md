@@ -32,6 +32,7 @@ Automated testing is not yet configured; rely on the following manual checks:
    - Switch between each predefined method.
    - Enter valid/invalid custom expressions (e.g. `4d6`, `2d8+3`, `3d6-1`, `banana`). Confirm error states and disabled roll button.
 3. Verify identity form validation triggers when fields are left blank and recovers on fix.
+4. Adjust combat fields (AC, HP, speed) to ensure min/max limits and HP > Max validation behave as expected.
 
 Additions to the dice parser or schema should include unit coverage (e.g., Vitest) in future iterations; see `docs/status.md` for current testing roadmap.
 

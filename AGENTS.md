@@ -19,7 +19,8 @@
 - Comments are reserved for domain context or non-obvious logic—avoid restating the code.
 
 ## Testing Guidelines
-- Manual checks: `npm run build`, swap through each dice method, and validate the custom expression input (`4d6`, `2d8+3`, `banana` error state).
+- Manual checks: `npm run build`, swap through each dice method, and validate the custom expression input (`4d6`, `2d8+3`, `banana` error state`).
+- Confirm the combat fields accept reasonable values (AC, HP, speed) and surface errors for out-of-range inputs or HP > max.
 - When automated tests are introduced, target `lib/dice.ts` parsing edge cases and form validation with Vitest + React Testing Library.
 - Record new manual or automated expectations in `docs/development.md` so others can repeat them.
 

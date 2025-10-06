@@ -6,7 +6,7 @@ A React + TypeScript application for crafting richly themed Dungeons & Dragons c
 
 - Ability score roller supporting classic methods and custom dice expressions with validation.
 - React Hook Form + Zod schema defining character identity and ability score structure.
-- Modular component layout (identity panel, ability roller, live score grid) ready for future combat, spellbook, and equipment sections.
+- Modular component layout (identity, combat readiness, ability roller, live score grid) ready for upcoming spellbook and equipment sections.
 - Styling tuned for a parchment-inspired interface with responsive panels and reusable field primitives.
 
 ## Getting Started

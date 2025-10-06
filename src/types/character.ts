@@ -49,3 +49,41 @@ export const diceMethodIds: DiceMethodId[] = [
   "three_d6_reroll_ones",
 ]
 
+export type CombatStatKey =
+  | "armorClass"
+  | "initiativeBonus"
+  | "speed"
+  | "maxHitPoints"
+  | "currentHitPoints"
+  | "temporaryHitPoints"
+  | "hitDice"
+
+export interface CombatStats {
+  armorClass: number
+  initiativeBonus: number
+  speed: number
+  maxHitPoints: number
+  currentHitPoints: number
+  temporaryHitPoints: number
+  hitDice: string
+}
+
+export const combatStatKeys: CombatStatKey[] = [
+  "armorClass",
+  "initiativeBonus",
+  "speed",
+  "maxHitPoints",
+  "currentHitPoints",
+  "temporaryHitPoints",
+  "hitDice",
+]
+
+export const combatStatLabels: Record<CombatStatKey, string> = {
+  armorClass: "Armor Class",
+  initiativeBonus: "Initiative Bonus",
+  speed: "Speed (ft)",
+  maxHitPoints: "Max HP",
+  currentHitPoints: "Current HP",
+  temporaryHitPoints: "Temporary HP",
+  hitDice: "Hit Dice",
+}

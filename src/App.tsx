@@ -18,10 +18,12 @@ import {
   characterFormSchema,
   createBlankAbilityScores,
   defaultCharacterIdentity,
+  defaultCombatStats,
   defaultDiceExpressionValue,
   type CharacterFormInput,
 } from "./schema/character"
 import { CharacterIdentitySection } from "./components/CharacterIdentitySection"
+import { CombatStatsSection } from "./components/CombatStatsSection"
 import "./App.css"
 const DEFAULT_METHOD: DiceMethodId = "four_d6_drop_lowest"
 
@@ -42,6 +44,7 @@ function App() {
       diceExpression: defaultDiceExpressionValue,
       abilityScores: initialAbilityScores,
       identity: defaultCharacterIdentity,
+      combat: defaultCombatStats,
     },
   })
 
@@ -126,6 +129,7 @@ function App() {
     <FormProvider {...form}>
       <main className="app-shell">
         <CharacterIdentitySection />
+        <CombatStatsSection />
 
         <section className="panel">
           <header className="panel__header">
@@ -204,17 +208,4 @@ function App() {
 }
 
 export default App
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -103,6 +103,12 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
+.combat-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -226,5 +232,4 @@
   border-color: rgba(97, 61, 193, 0.25);
   color: #4f3c61;
 }
-
 

@@ -15,10 +15,11 @@ src/
   App.css                # Global panel + field styling
   components/
     CharacterIdentitySection.tsx
+    CombatStatsSection.tsx
   lib/
     dice.ts              # Dice parsing, RNG helpers, method metadata
   schema/
-    character.ts         # Zod schema, defaults, alignment options
+    character.ts         # Zod schema, defaults, alignment/combat options
   types/
     character.ts         # Reusable enums, labels, defaults
 ```
@@ -29,18 +30,20 @@ Public assets live in `public/`; Vite handles asset inlining under `src/assets/`
 
 `App.tsx` wraps the sheet in `FormProvider`, exposing:
 
-- **CharacterIdentitySection** — Captures name, class, ancestry, background, alignment, and player info. Uses datalists for quick suggestions and displays inline validation.
-- **Ability Score Roller Panel** — Presents dice method selector, optional expression input, and roll trigger.
-- **Current Scores Panel** — Renders six ability score cards with calculated modifiers.
+- **CharacterIdentitySection** – Captures name, class, ancestry, background, alignment, and player info. Uses datalists for quick suggestions and displays inline validation.
+- **CombatStatsSection** – Collects AC, initiative bonus, speed, hit points, and hit dice with bounded numeric inputs and helper copy.
+- **Ability Score Roller Panel** – Presents dice method selector, optional expression input, and roll trigger.
+- **Current Scores Panel** – Renders six ability score cards with calculated modifiers.
 
-Future sections (combat, spellbook, equipment, notes) can follow the same `panel` pattern for consistent layout.
+Every panel uses the shared `panel` styling for a consistent parchment card aesthetic; components can opt into `panel--span-2` when they should stretch across the grid.
 
 ## State & Validation Flow
 
-1. `characterFormSchema` defines `diceMethod`, `diceExpression`, `abilityScores`, and `identity`.
-2. `useForm` seeds defaults derived from dice utilities and identity constants.
+1. `characterFormSchema` defines `diceMethod`, `diceExpression`, `abilityScores`, `identity`, and `combat`.
+2. `useForm` seeds defaults derived from dice utilities, identity constants, and `defaultCombatStats` (AC 12, HP 10, speed 30).
 3. When dice method changes, the app recalculates ability scores via `rollAbilityScores` (passing expressions where necessary).
-4. Custom expressions leverage `parseDiceExpression` to ensure safe, bounded rolling before touching form state.
+4. Combat inputs stay controlled via React Hook Form and Zod, which clamps numeric ranges and prevents current HP from exceeding max HP.
+5. Custom expressions leverage `parseDiceExpression` to ensure safe, bounded rolling before touching form state.
 
 ## Dice Utilities
 
@@ -56,10 +59,11 @@ Global aesthetics are handled in `App.css` and `index.css`:
 
 - Panel-based grid layout with responsive breakpoints.
 - Reusable `.field`, `.field__error`, `.field__description`, and `.helper-text` classes for form elements.
-- Parchment-inspired palette (creams, browns, violets) to reinforce the in-world journal motif.
+- `.identity-grid` + `.combat-grid` compose responsive column layouts for grouped fields.
+- Parchment-inspired palette (creams, browns, violets) reinforces the in-world journal motif.
 
 ## Extensibility Notes
 
 - Additional sections should declare dedicated components under `src/components/`.
 - Extend `characterFormSchema` incrementally; mirrored types live in `types/character.ts`.
-- For advanced dice features (advantage, exploding dice), expand `parseDiceExpression` with new token types and update validation copy in both schema and UI.
+- For advanced dice or combat features (advantage, exploding dice, death saves), expand the schema defaults first, then enhance `parseDiceExpression` and accompanying UI copy so validation stays in sync.

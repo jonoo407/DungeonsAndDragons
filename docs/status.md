@@ -1,14 +1,15 @@
-# Project Status — 05 Oct 2025
+# Project Status - 05 Oct 2025
 
 ## Snapshot
 
 - Vite + React + TypeScript scaffold in place with form infrastructure (React Hook Form + Zod).
-- Character identity panel and ability score roller panels live, including custom dice expression parsing.
+- Character identity, combat stats, and ability score roller panels live with shared validation + styling.
 - Documentation refactored; contributor guide and development references ready for collaborators.
 
 ## Recently Completed
 
-- Added `schema/character.ts` with alignment options, ability defaults, and dice expression validation.
+- Added `CombatStatsSection` with bounded numeric inputs, helper copy, and default values in `schema/character.ts`.
+- Expanded `schema/character.ts` to cover combat defaults and prevent current HP from exceeding max HP.
 - Implemented `lib/dice.ts` parser supporting additive/subtractive dice expressions and reusable RNG helpers.
 - Integrated dice method selector + custom expression input into the main form, with friendly validation feedback.
 - Refreshed styling to accommodate multi-panel layout and reusable field styles.
@@ -22,11 +23,11 @@
 
 ## Next Steps
 
-1. **Form Expansion** — Add panels for combat stats (AC, initiative, HP), skills, equipment, and notes using the existing panel pattern.
-2. **Persistence** — Implement localStorage autosave + import/export of character JSON.
-3. **Validation Enhancements** — Extend dice parser for advanced mechanics (keep/drop dice, advantage/disadvantage) if required.
-4. **Testing** — Introduce Vitest + React Testing Library for dice utilities and form behaviour.
-5. **Design Polish** — Create a print-friendly layout or PDF export for completed sheets.
+1. **Form Expansion** - Add panels for skills, equipment, spellcasting, and session notes using the existing panel pattern.
+2. **Persistence** - Implement localStorage autosave + import/export of character JSON.
+3. **Validation Enhancements** - Extend dice parser for advanced mechanics (keep/drop dice, advantage/disadvantage) if required.
+4. **Testing** - Introduce Vitest + React Testing Library for dice utilities and form behaviour.
+5. **Design Polish** - Create a print-friendly layout or PDF export for completed sheets.
 
 ## Open Questions
 
