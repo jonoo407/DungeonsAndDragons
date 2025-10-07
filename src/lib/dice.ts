@@ -35,7 +35,7 @@ const rollDie = (sides: number, random: RandomFn = defaultRandom) => Math.floor(
 
 const roll4d6DropLowest = (random: RandomFn = defaultRandom) => {
   const rolls = Array.from({ length: 4 }, () => rollDie(6, random))
-  const [_, ...highest] = rolls.sort((a, b) => a - b)
+  const [, ...highest] = rolls.sort((a, b) => a - b)
   return highest.reduce((total, current) => total + current, 0)
 }
 
@@ -45,10 +45,16 @@ const roll3d6 = (random: RandomFn = defaultRandom) =>
 const roll3d6RerollOnes = (random: RandomFn = defaultRandom) => {
   const dice = Array.from({ length: 3 }, () => {
     let value = rollDie(6, random)
-    while (value === 1) {
+    let rerollCount = 0
+    const maxRerolls = 100 // Safety limit to prevent infinite loops
+    
+    while (value === 1 && rerollCount < maxRerolls) {
       value = rollDie(6, random)
+      rerollCount++
     }
-    return value
+    
+    // If we hit the limit, use 2 as a fallback (minimum valid die result)
+    return rerollCount >= maxRerolls ? 2 : value
   })
 
   return dice.reduce((total, current) => total + current, 0)
@@ -57,7 +63,7 @@ const roll3d6RerollOnes = (random: RandomFn = defaultRandom) => {
 const MAX_DICE_COUNT = 100
 const MAX_DICE_SIDES = 1000
 
-const DICE_TOKEN_REGEX = /^([0-9]*)d([0-9]+)$/i
+const DICE_TOKEN_REGEX = /^([1-9][0-9]*|)d([1-9][0-9]*)$/i
 
 export const parseDiceExpression = (expression: string): ParsedDiceExpression | null => {
   const sanitized = expression.replace(/\s+/g, "").toLowerCase()
@@ -95,6 +101,14 @@ export const parseDiceExpression = (expression: string): ParsedDiceExpression | 
     if (diceMatch) {
       const countValue = diceMatch[1]
       const sidesValue = diceMatch[2]
+
+      // Additional validation: reject leading zeros
+      if (countValue && (countValue.startsWith('0') || countValue.includes('0') && countValue.length > 1)) {
+        return null
+      }
+      if (sidesValue.startsWith('0') || (sidesValue.includes('0') && sidesValue.length > 1)) {
+        return null
+      }
 
       const count = countValue === "" ? 1 : Number.parseInt(countValue, 10)
       const sides = Number.parseInt(sidesValue, 10)
