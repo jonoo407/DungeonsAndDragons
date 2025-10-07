@@ -33,18 +33,16 @@ Recommended environment: Node.js 20+.
 
 ## GitHub Pages Deployment
 
-This project is configured for automatic deployment to GitHub Pages:
+The repository ships with a GitHub Actions workflow that builds the production bundle and publishes it to the `gh-pages` branch. Once GitHub Pages is enabled for the repository, every push to `main` will redeploy the site at [`https://jonoo407.github.io/DungeonsAndDragons/`](https://jonoo407.github.io/DungeonsAndDragons/).
 
-1. **Automatic Deployment**: The app automatically deploys when changes are pushed to the `main` or `master` branch via GitHub Actions
-2. **Manual Deployment**: Run `npm run deploy` to manually deploy to GitHub Pages
-3. **Live Site**: Once deployed, the app will be available at `https://[username].github.io/dnd/`
+### Enable the workflow
 
-### Deployment Setup
+1. Open **Settings → Pages** in GitHub and choose **GitHub Actions** as the source.
+2. Push to `main` (or re-run the workflow from the **Actions** tab) to build and deploy the site.
 
-1. Enable GitHub Pages in your repository settings:
-   - Go to Settings → Pages
-   - Select "GitHub Actions" as the source
-2. The workflow will automatically build and deploy your app
+### Manual deployment (optional)
+
+If you prefer to publish from your local environment, run `npm run deploy`. The script will build the app and push the compiled assets to the `gh-pages` branch using the [`gh-pages`](https://github.com/tschaub/gh-pages) CLI.
 
 ## Contributing
 

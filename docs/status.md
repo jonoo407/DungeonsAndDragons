@@ -14,6 +14,7 @@
 - Integrated dice method selector + custom expression input into the main form, with friendly validation feedback.
 - Refreshed styling to accommodate multi-panel layout and reusable field styles.
 - Established documentation structure (`README.md`, `docs/`, `AGENTS.md`).
+- Automated GitHub Pages deployment through a build-and-publish workflow targeting the `gh-pages` branch.
 
 ## In Progress / Needs Attention
 
