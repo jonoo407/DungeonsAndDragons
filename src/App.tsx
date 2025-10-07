@@ -80,6 +80,8 @@ function App() {
 
     if (nextId !== "custom_expression") {
       clearErrors("diceExpression")
+      // Clear the dice expression field when switching away from custom method
+      setValue("diceExpression", defaultDiceExpressionValue, { shouldDirty: true })
     }
 
     const expression = nextId === "custom_expression" ? getValues("diceExpression") : undefined
