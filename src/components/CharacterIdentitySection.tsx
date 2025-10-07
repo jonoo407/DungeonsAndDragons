@@ -65,19 +65,6 @@ export const CharacterIdentitySection = () => {
           )}
         </div>
 
-        <div className="field">
-          <label htmlFor="class-name">Class</label>
-          <input
-            id="class-name"
-            type="text"
-            placeholder="Bard"
-            {...register("identity.className")}
-          />
-          {getError("className") && (
-            <p className="field__error">{getError("className")}</p>
-          )}
-        </div>
-
         <div className="field field--compact">
           <label htmlFor="level">Level</label>
           <input

@@ -1,7 +1,8 @@
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 import type { CombatStatKey } from "../types/character"
 import { combatStatLabels } from "../types/character"
 import type { CharacterFormInput } from "../schema/character"
+import { getClassDefaults } from "../lib/classes"
 
 interface CombatFieldConfig {
   key: CombatStatKey
@@ -82,8 +83,68 @@ const getFieldClassName = (key: CombatStatKey) =>
 export const CombatStatsSection = () => {
   const {
     register,
+    setValue,
+    control,
     formState: { errors },
   } = useFormContext<CharacterFormInput>()
+  const classSelection = useWatch<CharacterFormInput, "classSelection">({
+    control,
+    name: "classSelection",
+  })
+  const level =
+    useWatch<CharacterFormInput, "identity.level">({
+      control,
+      name: "identity.level",
+    }) ?? 1
+  const combatValues = useWatch<CharacterFormInput, "combat">({
+    control,
+    name: "combat",
+  })
+
+  const classDefaults = classSelection
+    ? getClassDefaults(classSelection.classId, level)
+    : null
+
+  const recommendedHitDice = classDefaults?.hitDice ?? null
+  const recommendedMaxHp = classDefaults?.suggestedMaxHitPoints ?? null
+
+  const hitDiceMismatch = Boolean(
+    recommendedHitDice && combatValues?.hitDice !== recommendedHitDice,
+  )
+  const maxHpMismatch = Boolean(
+    typeof recommendedMaxHp === "number" &&
+      combatValues?.maxHitPoints !== undefined &&
+      combatValues.maxHitPoints !== recommendedMaxHp,
+  )
+
+  const needsSync = Boolean(hitDiceMismatch || maxHpMismatch)
+
+  const applyClassDefaults = () => {
+    if (!classDefaults) {
+      return
+    }
+
+    setValue("combat.hitDice", classDefaults.hitDice, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+    setValue("combat.maxHitPoints", classDefaults.suggestedMaxHitPoints, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+
+    const currentHp = combatValues?.currentHitPoints ?? 0
+    const currentMaxHp = combatValues?.maxHitPoints ?? 0
+    if (
+      currentHp > classDefaults.suggestedMaxHitPoints ||
+      currentHp === currentMaxHp
+    ) {
+      setValue("combat.currentHitPoints", classDefaults.suggestedMaxHitPoints, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }
 
   type CombatErrors = Partial<Record<CombatStatKey, { message?: string }>> | undefined
 
@@ -120,9 +181,29 @@ export const CombatStatsSection = () => {
         ))}
       </div>
 
-      <p className="helper-text helper-text--muted">
-        Initiative is stored as a bonus; the tracker will roll d20 + bonus in a future iteration.
-      </p>
+      <div className="helper-text helper-text--muted helper-text--stack">
+        <p>
+          Initiative is stored as a bonus; the tracker will roll d20 + bonus in a future
+          iteration.
+        </p>
+        {classDefaults && (
+          <p>
+            Recommended for your class: {classDefaults.hitDice} hit dice and {classDefaults.suggestedMaxHitPoints}
+            {" "}
+            max HP at level {level}.
+          </p>
+        )}
+        {classDefaults && (
+          <button
+            className="button"
+            type="button"
+            onClick={applyClassDefaults}
+            disabled={!needsSync}
+          >
+            Apply class defaults
+          </button>
+        )}
+      </div>
     </section>
   )
 }

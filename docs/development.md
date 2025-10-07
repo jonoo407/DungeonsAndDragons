@@ -32,7 +32,12 @@ Automated testing is not yet configured; rely on the following manual checks:
    - Switch between each predefined method.
    - Enter valid/invalid custom expressions (e.g. `4d6`, `2d8+3`, `3d6-1`, `banana`). Confirm error states and disabled roll button.
 3. Verify identity form validation triggers when fields are left blank and recovers on fix.
-4. Adjust combat fields (AC, HP, speed) to ensure min/max limits and HP > Max validation behave as expected.
+4. Walk through class selection:
+   - Choose a class with subclasses (e.g. Cleric) and ensure the subclass select enforces a choice.
+   - Toggle to a martial class (Fighter, Paladin, Ranger) and confirm fighting style radios appear and persist per class.
+   - Switch to a prepared caster (Cleric, Druid, Wizard) and confirm the prepared-spell checkbox toggles without leaking to non-prepared classes.
+   - Apply class defaults from the combat panel and verify hit dice / max HP update without overwriting custom current HP unless needed.
+5. Adjust combat fields (AC, HP, speed) to ensure min/max limits and HP > Max validation behave as expected.
 
 Additions to the dice parser or schema should include unit coverage (e.g., Vitest) in future iterations; see `docs/status.md` for current testing roadmap.
 

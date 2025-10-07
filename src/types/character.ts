@@ -6,8 +6,6 @@ export type AbilityScoreKey =
   | "wisdom"
   | "charisma"
 
-export type AbilityScores = Record<AbilityScoreKey, number>
-
 export const abilityScoreKeys: AbilityScoreKey[] = [
   "strength",
   "dexterity",
@@ -26,9 +24,53 @@ export const abilityScoreLabels: Record<AbilityScoreKey, string> = {
   charisma: "Charisma",
 }
 
+export type AbilityScores = Record<AbilityScoreKey, number>
+
 export const abilityScoreDefaultValue = 10
 
 export const defaultDiceExpression = "4d6"
+
+export const classIds = [
+  "barbarian",
+  "bard",
+  "cleric",
+  "druid",
+  "fighter",
+  "monk",
+  "paladin",
+  "ranger",
+  "rogue",
+  "sorcerer",
+  "warlock",
+  "wizard",
+] as const
+
+export type ClassId = (typeof classIds)[number]
+
+export interface ClassOption {
+  id: ClassId
+  label: string
+}
+
+export interface SubclassOption {
+  id: string
+  label: string
+  description?: string
+}
+
+export type SpellcastingStyle = "prepared" | "spells_known" | "pact"
+
+export interface SpellcastingMeta {
+  style: SpellcastingStyle
+  focus?: string
+  preparationLabel?: string
+}
+
+export interface FightingStyleOption {
+  id: string
+  label: string
+  description?: string
+}
 
 export type DiceMethodId =
   | "custom_expression"
