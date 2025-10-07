@@ -102,11 +102,11 @@ export const parseDiceExpression = (expression: string): ParsedDiceExpression | 
       const countValue = diceMatch[1]
       const sidesValue = diceMatch[2]
 
-      // Additional validation: reject leading zeros
-      if (countValue && (countValue.startsWith('0') || countValue.includes('0') && countValue.length > 1)) {
+      // Additional validation: reject values with leading zeros (e.g. 01d6)
+      if (countValue && countValue.length > 1 && countValue.startsWith("0")) {
         return null
       }
-      if (sidesValue.startsWith('0') || (sidesValue.includes('0') && sidesValue.length > 1)) {
+      if (sidesValue.length > 1 && sidesValue.startsWith("0")) {
         return null
       }
 
