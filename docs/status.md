@@ -15,6 +15,7 @@
 - Refreshed styling to accommodate multi-panel layout and reusable field styles.
 - Established documentation structure (`README.md`, `docs/`, `AGENTS.md`).
 - Automated GitHub Pages deployment through a build-and-publish workflow targeting the `gh-pages` branch.
+- Adjusted GitHub Pages workflow triggers so deployments run from `main` or the legacy `master` branch.
 
 ## In Progress / Needs Attention
 
