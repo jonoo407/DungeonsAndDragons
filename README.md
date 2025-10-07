@@ -31,6 +31,21 @@ Recommended environment: Node.js 20+.
 - `docs/status.md` — Current milestone snapshot, open questions, and next steps for contributors.
 - `AGENTS.md` — Contributor workflow, coding standards, and pull request expectations.
 
+## GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages:
+
+1. **Automatic Deployment**: The app automatically deploys when changes are pushed to the `main` or `master` branch via GitHub Actions
+2. **Manual Deployment**: Run `npm run deploy` to manually deploy to GitHub Pages
+3. **Live Site**: Once deployed, the app will be available at `https://[username].github.io/dnd/`
+
+### Deployment Setup
+
+1. Enable GitHub Pages in your repository settings:
+   - Go to Settings → Pages
+   - Select "GitHub Actions" as the source
+2. The workflow will automatically build and deploy your app
+
 ## Contributing
 
 New collaborators should start with `AGENTS.md`, then review the deeper references under `docs/`. Issues, improvements, and questions can be captured in `docs/status.md` so future sessions pick up seamlessly.
