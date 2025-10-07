@@ -15,14 +15,21 @@ import {
   rollAbilityScores,
 } from "./lib/dice"
 import {
+  formatSavingThrows,
+  getClassDefaults,
+  getClassDefinition,
+} from "./lib/classes"
+import {
   characterFormSchema,
   createBlankAbilityScores,
   defaultCharacterIdentity,
+  defaultClassSelection,
   defaultCombatStats,
   defaultDiceExpressionValue,
   type CharacterFormInput,
 } from "./schema/character"
 import { CharacterIdentitySection } from "./components/CharacterIdentitySection"
+import { ClassSelectionSection } from "./components/ClassSelectionSection"
 import { CombatStatsSection } from "./components/CombatStatsSection"
 import "./App.css"
 const DEFAULT_METHOD: DiceMethodId = "four_d6_drop_lowest"
@@ -44,6 +51,7 @@ function App() {
       diceExpression: defaultDiceExpressionValue,
       abilityScores: initialAbilityScores,
       identity: defaultCharacterIdentity,
+      classSelection: defaultClassSelection,
       combat: defaultCombatStats,
     },
   })
@@ -61,7 +69,23 @@ function App() {
   const methodId = watch("diceMethod") ?? DEFAULT_METHOD
   const diceExpression = watch("diceExpression") ?? defaultDiceExpressionValue
   const abilityScores = watch("abilityScores")
+  const classSelection = watch("classSelection")
+  const level = watch("identity.level") ?? defaultCharacterIdentity.level
   const selectedMethod = useMemo(() => getDiceMethod(methodId), [methodId])
+  const classDefaults = useMemo(() => {
+    if (!classSelection) {
+      return null
+    }
+
+    return getClassDefaults(classSelection.classId, level)
+  }, [classSelection, level])
+  const classDefinition = useMemo(() => {
+    if (!classSelection) {
+      return null
+    }
+
+    return getClassDefinition(classSelection.classId)
+  }, [classSelection])
 
   const expressionRegister = register("diceExpression", {
     onChange: () => {
@@ -131,6 +155,7 @@ function App() {
     <FormProvider {...form}>
       <main className="app-shell">
         <CharacterIdentitySection />
+        <ClassSelectionSection />
         <CombatStatsSection />
 
         <section className="panel">
@@ -138,6 +163,15 @@ function App() {
             <h2>Ability Score Roller</h2>
             <p>Choose a dice method to seed your character&apos;s six ability scores.</p>
           </header>
+
+          {classDefaults && classDefinition && (
+            <p className="helper-text helper-text--muted">
+              The {classDefinition.label} favors {abilityScoreLabels[classDefaults.primaryAbility]}
+              {" "}
+              and is proficient in {formatSavingThrows(classDefaults.savingThrows)} saving throws.
+              Consider prioritising that ability when you assign rolls.
+            </p>
+          )}
 
           <div className="method-picker">
             <label htmlFor="dice-method">Dice method</label>

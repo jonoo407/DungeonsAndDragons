@@ -2,10 +2,20 @@ import { z } from "zod"
 import {
   abilityScoreDefaultValue,
   abilityScoreKeys,
+  classIds,
   defaultDiceExpression,
   type AbilityScores,
+  type ClassId,
   type CombatStats,
 } from "../types/character"
+import {
+  getClassDefaults,
+  getFightingStyleOptions,
+  getSubclassOptions,
+  hasPreparedSpellcasting,
+  isFightingStyleValid,
+  isSubclassValid,
+} from "../lib/classes"
 import { isDiceExpressionValid } from "../lib/dice"
 
 export const abilityScoresSchema = z.object({
@@ -40,7 +50,6 @@ export const alignmentOptions = [
 
 export const characterIdentitySchema = z.object({
   characterName: z.string().min(1, "Character name is required"),
-  className: z.string().min(1, "Class is required"),
   level: z
     .number()
     .int()
@@ -51,6 +60,82 @@ export const characterIdentitySchema = z.object({
   alignment: z.enum(alignmentOptions),
   playerName: z.string().min(1, "Player name is required"),
 })
+
+export const classSelectionSchema = z
+  .object({
+    classId: z.enum(classIds),
+    subclassId: z
+      .string()
+      .trim()
+      .min(1, "Choose a subclass")
+      .optional()
+      .nullable(),
+    fightingStyleId: z
+      .string()
+      .trim()
+      .min(1, "Choose a fighting style")
+      .optional()
+      .nullable(),
+    preparesSpells: z.boolean(),
+  })
+  .superRefine((value, ctx) => {
+    const subclassId = value.subclassId?.trim() ?? null
+    const fightingStyleId = value.fightingStyleId?.trim() ?? null
+
+    const subclassOptions = getSubclassOptions(value.classId)
+    if (subclassOptions.length === 0) {
+      if (subclassId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["subclassId"],
+          message: "This class does not offer subclasses",
+        })
+      }
+    } else if (!subclassId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["subclassId"],
+        message: "Select a subclass for this class",
+      })
+    } else if (!isSubclassValid(value.classId, subclassId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["subclassId"],
+        message: "Choose a valid subclass option",
+      })
+    }
+
+    const fightingStyleOptions = getFightingStyleOptions(value.classId)
+    if (fightingStyleOptions.length === 0) {
+      if (fightingStyleId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["fightingStyleId"],
+          message: "This class does not select a fighting style",
+        })
+      }
+    } else if (!fightingStyleId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["fightingStyleId"],
+        message: "Pick a fighting style for this class",
+      })
+    } else if (!isFightingStyleValid(value.classId, fightingStyleId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["fightingStyleId"],
+        message: "Choose a valid fighting style option",
+      })
+    }
+
+    if (!hasPreparedSpellcasting(value.classId) && value.preparesSpells) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["preparesSpells"],
+        message: "This class does not prepare spells",
+      })
+    }
+  })
 
 export const diceMethodSchema = z.union([
   z.literal("custom_expression"),
@@ -118,6 +203,7 @@ export const characterFormSchema = z.object({
   diceExpression: diceExpressionSchema,
   abilityScores: abilityScoresSchema,
   identity: characterIdentitySchema,
+  classSelection: classSelectionSchema,
   combat: combatStatsSchema,
 })
 
@@ -129,24 +215,40 @@ export type CharacterIdentity = CharacterFormValues["identity"]
 
 export type CharacterCombat = CharacterFormValues["combat"]
 
+const DEFAULT_LEVEL = 1
+const DEFAULT_CLASS_ID: ClassId = "fighter"
+
 export const defaultCharacterIdentity: CharacterIdentity = {
   characterName: "",
-  className: "",
-  level: 1,
+  level: DEFAULT_LEVEL,
   ancestry: "",
   background: "",
   alignment: "Unaligned",
   playerName: "",
 }
 
+export type ClassSelection = z.output<typeof classSelectionSchema>
+
+export const defaultClassSelection: ClassSelection = {
+  classId: DEFAULT_CLASS_ID,
+  subclassId: null,
+  fightingStyleId: null,
+  preparesSpells: false,
+}
+
+const defaultClassDefaults = getClassDefaults(
+  defaultClassSelection.classId,
+  DEFAULT_LEVEL,
+)
+
 export const defaultCombatStats: CombatStats = {
   armorClass: 12,
   initiativeBonus: 0,
   speed: 30,
-  maxHitPoints: 10,
-  currentHitPoints: 10,
+  maxHitPoints: defaultClassDefaults.suggestedMaxHitPoints,
+  currentHitPoints: defaultClassDefaults.suggestedMaxHitPoints,
   temporaryHitPoints: 0,
-  hitDice: "1d8",
+  hitDice: defaultClassDefaults.hitDice,
 }
 
 export const defaultDiceExpressionValue = defaultDiceExpression
