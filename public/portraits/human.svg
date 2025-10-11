@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 420" role="img" aria-labelledby="title desc">
+  <title id="title">Human Adventurer Portrait</title>
+  <desc id="desc">Stylised bust of a human character with a warm color palette.</desc>
+  <defs>
+    <linearGradient id="human-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6ad55" />
+      <stop offset="100%" stop-color="#dd6b20" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="420" rx="24" fill="url(#human-bg)" />
+  <g fill="none" stroke="#2d3748" stroke-width="6" stroke-linecap="round">
+    <path d="M210 168c0 34-26 62-58 62s-58-28-58-62 26-62 58-62 58 28 58 62z" />
+    <path d="M90 302c12-42 39-70 62-70s50 28 62 70" />
+  </g>
+  <text x="160" y="360" text-anchor="middle" font-family="'Trebuchet MS', sans-serif" font-size="28" fill="#1a202c" letter-spacing="1.2">
+    Human
+  </text>
+</svg>

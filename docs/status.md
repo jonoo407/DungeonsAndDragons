@@ -18,6 +18,7 @@
 - Adjusted GitHub Pages workflow triggers so deployments run from `main` or the legacy `master` branch.
 - Delivered class selection flow with SRD class metadata, subclass enforcement, fighting style radios, and prepared-spell toggle backed by new `lib/classes.ts` helpers.
 - Surfaced class-derived defaults in the combat panel, including an "apply defaults" action and ability-focused copy in the ability roller.
+- Implemented an ancestry/class/gender-aware portrait system with resolver fallbacks, loading skeleton, and starter assets.
 
 ## In Progress / Needs Attention
 
@@ -38,5 +39,7 @@
 - Should ability scores remain read-only derived values, or will manual overrides be allowed per house rules?
 - What level of spell management is expected (full spellbook vs. quick summary)?
 - Are there external data integrations planned (SRD APIs, compendium imports)?
+- Should players be able to override the auto-selected portrait with manual picks or uploads?
+- Do we need animated or multi-frame portrait support for future theming?
 
 Capture answers or new tasks here before closing any future work sessions.

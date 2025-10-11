@@ -7,7 +7,7 @@
 ## Assumptions
 - Character gender will be captured as a limited enum (e.g., `"female" | "male" | "nonbinary" | "custom"`) with optional custom text for edge cases.
 - Portraits will live in `public/portraits/` so they can be referenced via simple URLs without going through the bundler.
-- Each portrait variant follows a predictable file naming convention: `<ancestry>__<class>__<gender>.webp` with lowercase, kebab-case identifiers that align with our existing enums.
+- Each portrait variant follows a predictable file naming convention: `<ancestry>__<class>__<gender>.svg` with lowercase, kebab-case identifiers that align with our existing enums.
 - When an exact match is missing we can fall back in order: full triple → ancestry+gender → class+gender → ancestry only → global default.
 
 ## Workstreams
@@ -36,7 +36,7 @@
 ### 4. Asset Management
 1. Add a handful of starter portrait images to `public/portraits/` that cover representative combinations (ensure we have at least one fallback per ancestry and class group).
 2. Document the naming scheme inside `docs/development.md` so contributors can drop in additional variants without code changes.
-3. Consider introducing `public/portraits/fallback.webp` as the universal default referenced by `resolvePortraitSource`.
+3. Consider introducing `public/portraits/fallback.svg` as the universal default referenced by `resolvePortraitSource`.
 
 ### 5. Styling & Accessibility
 1. Add portrait-specific styles to `App.css` (e.g., max-width, aspect ratio, shadow) while keeping overrides minimal.

@@ -83,6 +83,45 @@ export interface SubclassOption {
   description?: string
 }
 
+export const genderIds = [
+  "female",
+  "male",
+  "nonbinary",
+  "custom",
+] as const
+
+export type GenderId = (typeof genderIds)[number]
+
+export const genderLabels: Record<Exclude<GenderId, "custom">, string> = {
+  female: "Female",
+  male: "Male",
+  nonbinary: "Nonbinary",
+}
+
+export interface CharacterGender {
+  id: GenderId
+  label: string
+}
+
+export const genderOptions: CharacterGender[] = [
+  { id: "female", label: genderLabels.female },
+  { id: "male", label: genderLabels.male },
+  { id: "nonbinary", label: genderLabels.nonbinary },
+  { id: "custom", label: "Custom (self-described)" },
+]
+
+export interface PortraitId {
+  ancestry: RaceId | null | undefined
+  classId: ClassId | null | undefined
+  genderId: GenderId | null | undefined
+}
+
+export const createPortraitId = (
+  ancestry: RaceId | null | undefined,
+  classId: ClassId | null | undefined,
+  genderId: GenderId | null | undefined,
+): PortraitId => ({ ancestry, classId, genderId })
+
 export type SpellcastingStyle = "prepared" | "spells_known" | "pact"
 
 export interface SpellcastingMeta {
