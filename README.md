@@ -8,6 +8,8 @@ A React + TypeScript application for crafting richly themed Dungeons & Dragons c
 - React Hook Form + Zod schema defining character identity and ability score structure.
 - Modular component layout (identity, combat readiness, ability roller, live score grid) ready for upcoming spellbook and equipment sections.
 - Styling tuned for a parchment-inspired interface with responsive panels and reusable field primitives.
+- Character portrait hero panel that swaps artwork based on ancestry, class, and gender selections with graceful fallbacks.
+- Class selection flow including subclasses, fighting styles, and prepared spell toggles that feed combat defaults.
 
 ## Getting Started
 

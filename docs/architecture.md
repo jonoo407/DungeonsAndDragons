@@ -15,11 +15,13 @@ src/
   App.css                # Global panel + field styling
   components/
     CharacterIdentitySection.tsx
+    CharacterPortrait.tsx
     ClassSelectionSection.tsx
     CombatStatsSection.tsx
   lib/
     classes.ts           # Class metadata, helpers for defaults & summaries
     dice.ts              # Dice parsing, RNG helpers, method metadata
+    portraits.ts         # Portrait manifest + ancestry/class/gender resolver
   schema/
     character.ts         # Zod schema, defaults, alignment/combat options
   types/
@@ -32,6 +34,7 @@ Public assets live in `public/`; Vite handles asset inlining under `src/assets/`
 
 `App.tsx` wraps the sheet in `FormProvider`, exposing:
 
+- **CharacterPortrait** – Displays ancestry/class/gender-aware art resolved via `lib/portraits`, with loading skeletons and optional attribution.
 - **CharacterIdentitySection** – Captures name, level, ancestry, background, alignment, and player info. Uses datalists for quick suggestions and displays inline validation.
 - **ClassSelectionSection** – Presents a SRD-compliant class list, subclass picker, prepared-spell toggle, and fighting style radios backed by class metadata. Emits helper text describing hit dice, primary abilities, and saving throws.
 - **CombatStatsSection** – Collects AC, initiative bonus, speed, hit points, and hit dice with bounded numeric inputs, plus class-aware recommendations and an "apply defaults" action.
@@ -61,6 +64,12 @@ Every panel uses the shared `panel` styling for a consistent parchment card aest
 - Supported methods: `custom_expression`, `four_d6_drop_lowest`, `three_d6`, `three_d6_reroll_ones`.
 - Expression parser accepts additive/subtractive chains (e.g. `2d6+1d4+3`) with guardrails (`MAX_DICE_COUNT`, `MAX_DICE_SIDES`).
 - `isDiceExpressionValid` underpins schema refinements and UI validation, while `rollAbilityScores` outputs an `AbilityScores` map keyed by ability.
+
+`lib/portraits.ts` owns the ancestry/class/gender portrait resolver:
+
+- `PORTRAIT_MANIFEST` maps identifier tuples to static assets in `public/portraits/`.
+- `resolvePortraitSource` walks through fallback combinations (triple match → ancestry/gender → class/gender → single ancestry/class → global default).
+- `getPortraitSourceFromValues` bridges raw form selections to the resolver for ease of use in components and tests.
 
 ## Styling System
 
