@@ -14,6 +14,7 @@ Install dependencies once with `npm install`.
 | Start dev server | `npm run dev` | Serves at `http://127.0.0.1:5173` with HMR. |
 | Type-check & build | `npm run build` | Runs `tsc -b` before emitting the production bundle. |
 | Lint | `npm run lint` | Uses the Vite template ESLint config; extend via `eslint.config.js`. |
+| Run portrait resolver tests | `npm run test` | Compiles a minimal Node test harness and executes the resolver regression suite. |
 | Preview build | `npm run preview` | Requires a prior `npm run build`. |
 
 ## Coding Standards
@@ -25,7 +26,7 @@ Install dependencies once with `npm install`.
 
 ## Validation & Testing
 
-Automated testing is not yet configured; rely on the following manual checks:
+Automated coverage currently exists for the portrait resolver via a lightweight Node harness (`npm run test`). Continue to rely on the following manual checks for the rest of the sheet until broader automation lands:
 
 1. `npm run build` — Ensures TypeScript + Vite compilation succeeds.
 2. Exercise the ability roller in dev mode:
@@ -38,8 +39,15 @@ Automated testing is not yet configured; rely on the following manual checks:
    - Switch to a prepared caster (Cleric, Druid, Wizard) and confirm the prepared-spell checkbox toggles without leaking to non-prepared classes.
    - Apply class defaults from the combat panel and verify hit dice / max HP update without overwriting custom current HP unless needed.
 5. Adjust combat fields (AC, HP, speed) to ensure min/max limits and HP > Max validation behave as expected.
+6. Verify the character portrait updates as ancestry, class, and gender selections change. Confirm the fallback image appears for unsupported combinations and that the layout stays responsive on narrow viewports.
 
-Additions to the dice parser or schema should include unit coverage (e.g., Vitest) in future iterations; see `docs/status.md` for current testing roadmap.
+## Portrait Assets
+
+- Store portrait art in `public/portraits/` using the naming scheme `<ancestry>__<class>__<gender>.svg` (lowercase, kebab-case identifiers aligned with the schema enums). Partial fallbacks may omit class or gender segments (e.g. `dwarf.svg`, `fighter__male.svg`).
+- Prefer lightweight SVG illustrations or other text-based formats so pull requests avoid binary asset diffs. If you must commit raster art, keep the file under version control through Git LFS.
+- Run `npm run build` after adding art to ensure Vite picks up the new static files, and add a manifest entry in `src/lib/portraits.ts` so the resolver can find the asset.
+
+Additions to the dice parser or schema should include unit coverage (using the existing harness or an expanded solution) in future iterations; see `docs/status.md` for the current testing roadmap.
 
 ## Git & Branching
 
@@ -49,6 +57,6 @@ Additions to the dice parser or schema should include unit coverage (e.g., Vites
 
 ## Future Enhancements
 
-- Introduce automated tests (Vitest + React Testing Library) once more sheet sections exist.
+- Introduce broader automated tests (e.g., React Testing Library) once more sheet sections exist.
 - Add continuous integration (GitHub Actions) to run `npm run build` and `npm run lint` on pull requests.
 - Consider integrating Storybook or Ladle for isolated component development as the sheet grows.
