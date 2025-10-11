@@ -30,12 +30,15 @@ const backgroundSuggestions = [
 export const CharacterIdentitySection = () => {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<CharacterFormInput>()
   const selectedAncestry = useWatch<CharacterFormInput, "identity.ancestry">({
+    control,
     name: "identity.ancestry",
   })
   const selectedGenderId = useWatch<CharacterFormInput, "identity.genderId">({
+    control,
     name: "identity.genderId",
   })
   const selectedRace = getRaceDefinition(selectedAncestry)
