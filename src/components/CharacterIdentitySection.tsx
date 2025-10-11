@@ -1,21 +1,13 @@
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 import {
   alignmentOptions,
   type CharacterFormInput,
 } from "../schema/character"
-
-const ancestrySuggestions = [
-  "Human",
-  "Elf",
-  "Half-Elf",
-  "Dwarf",
-  "Halfling",
-  "Gnome",
-  "Tiefling",
-  "Dragonborn",
-  "Half-Orc",
-  "Goliath",
-]
+import {
+  getRaceAbilityBonuses,
+  getRaceDefinition,
+  races,
+} from "../lib/races"
 
 const backgroundSuggestions = [
   "Acolyte",
@@ -35,6 +27,11 @@ export const CharacterIdentitySection = () => {
     register,
     formState: { errors },
   } = useFormContext<CharacterFormInput>()
+  const selectedAncestry = useWatch<CharacterFormInput, "identity.ancestry">({
+    name: "identity.ancestry",
+  })
+  const selectedRace = getRaceDefinition(selectedAncestry)
+  const abilityBonuses = getRaceAbilityBonuses(selectedRace)
 
   type IdentityField = keyof CharacterFormInput["identity"]
   const identityErrors = errors.identity as
@@ -79,20 +76,45 @@ export const CharacterIdentitySection = () => {
 
         <div className="field">
           <label htmlFor="ancestry">Ancestry</label>
-          <input
-            id="ancestry"
-            type="text"
-            list="character-ancestry"
-            placeholder="Half-Elf"
-            {...register("identity.ancestry")}
-          />
-          <datalist id="character-ancestry">
-            {ancestrySuggestions.map((ancestry) => (
-              <option key={ancestry} value={ancestry} />
+          <select id="ancestry" {...register("identity.ancestry")}>
+            {races.map((race) => (
+              <option key={race.id} value={race.id}>
+                {race.label}
+              </option>
             ))}
-          </datalist>
+          </select>
           {getError("ancestry") && (
             <p className="field__error">{getError("ancestry")}</p>
+          )}
+          {selectedRace && (
+            <div className="race-summary">
+              <p className="field__description">
+                <strong>Speed:</strong> {selectedRace.speed} ft.
+              </p>
+              {abilityBonuses.length > 0 && (
+                <p className="field__description">
+                  <strong>Ability bonuses:</strong>{" "}
+                  {abilityBonuses
+                    .map((bonus) => `${bonus.amount > 0 ? "+" : ""}${bonus.amount} ${bonus.ability}`)
+                    .join(", ")}
+                </p>
+              )}
+              {selectedRace.abilities.length > 0 && (
+                <div className="race-summary__traits">
+                  <p className="field__description">
+                    <strong>Traits</strong>
+                  </p>
+                  <ul className="race-summary__trait-list">
+                    {selectedRace.abilities.map((trait) => (
+                      <li key={trait.name}>
+                        <span className="race-summary__trait-name">{trait.name}.</span>{" "}
+                        <span className="race-summary__trait-description">{trait.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
