@@ -267,6 +267,43 @@
   color: #6f5e4b;
 }
 
+.race-summary {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.race-summary__traits {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.race-summary__trait-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+  color: #564731;
+}
+
+.race-summary__trait-name {
+  font-weight: 600;
+  color: #3d3326;
+}
+
+.race-summary__trait-description {
+  color: #5c4f3d;
+}
+
+.scores-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4f3c61;
+  background: rgba(97, 61, 193, 0.08);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
+
 .option-stack {
   display: grid;
   gap: 0.75rem;

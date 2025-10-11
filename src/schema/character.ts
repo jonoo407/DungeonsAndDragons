@@ -4,6 +4,8 @@ import {
   abilityScoreKeys,
   classIds,
   defaultDiceExpression,
+  raceIds,
+  type RaceId,
   type AbilityScores,
   type ClassId,
   type CombatStats,
@@ -55,7 +57,7 @@ export const characterIdentitySchema = z.object({
     .int()
     .min(1, "Minimum level is 1")
     .max(20, "Maximum adventuring level is 20"),
-  ancestry: z.string().min(1, "Ancestry is required"),
+  ancestry: z.enum(raceIds),
   background: z.string().min(1, "Background is required"),
   alignment: z.enum(alignmentOptions),
   playerName: z.string().min(1, "Player name is required"),
@@ -217,11 +219,12 @@ export type CharacterCombat = CharacterFormValues["combat"]
 
 const DEFAULT_LEVEL = 1
 const DEFAULT_CLASS_ID: ClassId = "fighter"
+const DEFAULT_RACE_ID: RaceId = "human"
 
 export const defaultCharacterIdentity: CharacterIdentity = {
   characterName: "",
   level: DEFAULT_LEVEL,
-  ancestry: "",
+  ancestry: DEFAULT_RACE_ID,
   background: "",
   alignment: "Unaligned",
   playerName: "",

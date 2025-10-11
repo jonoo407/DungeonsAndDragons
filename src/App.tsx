@@ -14,6 +14,7 @@ import {
   isDiceExpressionValid,
   rollAbilityScores,
 } from "./lib/dice"
+import { applyRaceBonuses, getRaceDefinition } from "./lib/races"
 import {
   formatSavingThrows,
   getClassDefaults,
@@ -71,6 +72,7 @@ function App() {
   const abilityScores = watch("abilityScores")
   const classSelection = watch("classSelection")
   const level = watch("identity.level") ?? defaultCharacterIdentity.level
+  const ancestry = watch("identity.ancestry")
   const selectedMethod = useMemo(() => getDiceMethod(methodId), [methodId])
   const classDefaults = useMemo(() => {
     if (!classSelection) {
@@ -86,6 +88,13 @@ function App() {
 
     return getClassDefinition(classSelection.classId)
   }, [classSelection])
+
+  const selectedRace = useMemo(() => getRaceDefinition(ancestry), [ancestry])
+
+  const adjustedAbilityScores = useMemo(
+    () => applyRaceBonuses(abilityScores, ancestry),
+    [abilityScores, ancestry],
+  )
 
   const expressionRegister = register("diceExpression", {
     onChange: () => {
@@ -223,9 +232,15 @@ function App() {
             <p>Values generated from your chosen method. Edit them once the full sheet is live.</p>
           </header>
 
+          {selectedRace && (
+            <p className="scores-note">
+              Racial bonuses from the {selectedRace.label} ancestry are applied to these totals.
+            </p>
+          )}
+
           <div className="scores-grid">
             {abilityScoreKeys.map((key) => {
-              const score = abilityScores?.[key] ?? abilityScoreDefaultValue
+              const score = adjustedAbilityScores?.[key] ?? abilityScoreDefaultValue
               const modifier = abilityMod(score)
 
               return (

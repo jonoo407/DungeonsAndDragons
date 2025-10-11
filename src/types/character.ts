@@ -30,6 +30,31 @@ export const abilityScoreDefaultValue = 10
 
 export const defaultDiceExpression = "4d6"
 
+export const raceIds = [
+  "human",
+  "dwarf",
+  "half_orc",
+  "elf",
+  "half_elf",
+  "gnome",
+  "lizard_man",
+] as const
+
+export type RaceId = (typeof raceIds)[number]
+
+export interface RaceAbility {
+  name: string
+  description: string
+}
+
+export interface RaceDefinition {
+  id: RaceId
+  label: string
+  speed: number
+  abilityBonuses: Partial<Record<AbilityScoreKey, number>>
+  abilities: RaceAbility[]
+}
+
 export const classIds = [
   "barbarian",
   "bard",
