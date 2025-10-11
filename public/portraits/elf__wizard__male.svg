@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 420" role="img" aria-labelledby="title desc">
+  <title id="title">Elf Man Wizard Portrait</title>
+  <desc id="desc">Stylised bust of an elven wizard with arcane motifs.</desc>
+  <defs>
+    <linearGradient id="elf-wizard-male-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#68d391" />
+      <stop offset="100%" stop-color="#2f855a" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="420" rx="24" fill="url(#elf-wizard-male-bg)" />
+  <g fill="none" stroke="#1c4532" stroke-width="6" stroke-linecap="round">
+    <path d="M214 162c0 36-24 64-54 64s-54-28-54-64 24-64 54-64 54 28 54 64z" />
+    <path d="M98 300c12-46 36-70 62-70s50 24 62 70" />
+    <path d="M116 222c12-18 28-28 44-28s32 10 44 28" />
+    <path d="M160 236l-20 28h40z" />
+  </g>
+  <text x="160" y="360" text-anchor="middle" font-family="'Trebuchet MS', sans-serif" font-size="24" fill="#1c4532" letter-spacing="1.2">
+    Elf • Wizard
+  </text>
+</svg>

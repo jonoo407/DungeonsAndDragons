@@ -8,6 +8,11 @@ import {
   getRaceDefinition,
   races,
 } from "../lib/races"
+import {
+  genderOptions,
+  genderLabels,
+  type GenderId,
+} from "../types/character"
 
 const backgroundSuggestions = [
   "Acolyte",
@@ -30,8 +35,12 @@ export const CharacterIdentitySection = () => {
   const selectedAncestry = useWatch<CharacterFormInput, "identity.ancestry">({
     name: "identity.ancestry",
   })
+  const selectedGenderId = useWatch<CharacterFormInput, "identity.genderId">({
+    name: "identity.genderId",
+  })
   const selectedRace = getRaceDefinition(selectedAncestry)
   const abilityBonuses = getRaceAbilityBonuses(selectedRace)
+  const isCustomGender = selectedGenderId === "custom"
 
   type IdentityField = keyof CharacterFormInput["identity"]
   const identityErrors = errors.identity as
@@ -119,6 +128,25 @@ export const CharacterIdentitySection = () => {
         </div>
 
         <div className="field">
+          <label htmlFor="gender">Gender</label>
+          <select id="gender" {...register("identity.genderId")}> 
+            {genderOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {getError("genderId") && (
+            <p className="field__error">{getError("genderId")}</p>
+          )}
+          {selectedGenderId && selectedGenderId !== "custom" && (
+            <p className="field__description">
+              Displayed as {genderLabels[selectedGenderId as Exclude<GenderId, "custom">]}
+            </p>
+          )}
+        </div>
+
+        <div className="field">
           <label htmlFor="background">Background</label>
           <input
             id="background"
@@ -150,6 +178,21 @@ export const CharacterIdentitySection = () => {
             <p className="field__error">{getError("alignment")}</p>
           )}
         </div>
+
+        {isCustomGender && (
+          <div className="field field--span-2">
+            <label htmlFor="custom-gender">Custom gender label</label>
+            <input
+              id="custom-gender"
+              type="text"
+              placeholder="Genderfluid guardian"
+              {...register("identity.customGenderLabel", { shouldUnregister: true })}
+            />
+            {getError("customGenderLabel") && (
+              <p className="field__error">{getError("customGenderLabel")}</p>
+            )}
+          </div>
+        )}
 
         <div className="field field--span-2">
           <label htmlFor="player-name">Player</label>

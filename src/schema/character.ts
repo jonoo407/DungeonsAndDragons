@@ -4,11 +4,13 @@ import {
   abilityScoreKeys,
   classIds,
   defaultDiceExpression,
+  genderIds,
   raceIds,
   type RaceId,
   type AbilityScores,
   type ClassId,
   type CombatStats,
+  type GenderId,
 } from "../types/character"
 import {
   getClassDefaults,
@@ -61,6 +63,24 @@ export const characterIdentitySchema = z.object({
   background: z.string().min(1, "Background is required"),
   alignment: z.enum(alignmentOptions),
   playerName: z.string().min(1, "Player name is required"),
+  genderId: z.enum(genderIds),
+  customGenderLabel: z
+    .string()
+    .trim()
+    .max(60, "Keep custom gender labels concise")
+    .optional()
+    .nullable(),
+}).superRefine((value, ctx) => {
+  if (value.genderId === "custom") {
+    const label = value.customGenderLabel?.trim() ?? ""
+    if (!label) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["customGenderLabel"],
+        message: "Describe your gender when using the custom option",
+      })
+    }
+  }
 })
 
 export const classSelectionSchema = z
@@ -220,6 +240,7 @@ export type CharacterCombat = CharacterFormValues["combat"]
 const DEFAULT_LEVEL = 1
 const DEFAULT_CLASS_ID: ClassId = "fighter"
 const DEFAULT_RACE_ID: RaceId = "human"
+const DEFAULT_GENDER_ID: GenderId = "female"
 
 export const defaultCharacterIdentity: CharacterIdentity = {
   characterName: "",
@@ -228,6 +249,8 @@ export const defaultCharacterIdentity: CharacterIdentity = {
   background: "",
   alignment: "Unaligned",
   playerName: "",
+  genderId: DEFAULT_GENDER_ID,
+  customGenderLabel: "",
 }
 
 export type ClassSelection = z.output<typeof classSelectionSchema>

@@ -6,7 +6,10 @@ import {
   abilityScoreKeys,
   abilityScoreLabels,
   abilityScoreDefaultValue,
+  createPortraitId,
+  genderLabels,
   type DiceMethodId,
+  type GenderId,
 } from "./types/character"
 import {
   diceMethods,
@@ -32,6 +35,8 @@ import {
 import { CharacterIdentitySection } from "./components/CharacterIdentitySection"
 import { ClassSelectionSection } from "./components/ClassSelectionSection"
 import { CombatStatsSection } from "./components/CombatStatsSection"
+import { CharacterPortrait } from "./components/CharacterPortrait"
+import { resolvePortraitSource } from "./lib/portraits"
 import "./App.css"
 const DEFAULT_METHOD: DiceMethodId = "four_d6_drop_lowest"
 
@@ -73,6 +78,11 @@ function App() {
   const classSelection = watch("classSelection")
   const level = watch("identity.level") ?? defaultCharacterIdentity.level
   const ancestry = watch("identity.ancestry")
+  const genderId = (
+    watch("identity.genderId") ?? defaultCharacterIdentity.genderId
+  ) as GenderId
+  const customGenderLabel =
+    watch("identity.customGenderLabel") ?? defaultCharacterIdentity.customGenderLabel
   const selectedMethod = useMemo(() => getDiceMethod(methodId), [methodId])
   const classDefaults = useMemo(() => {
     if (!classSelection) {
@@ -95,6 +105,24 @@ function App() {
     () => applyRaceBonuses(abilityScores, ancestry),
     [abilityScores, ancestry],
   )
+
+  const classId = classSelection?.classId ?? null
+  const portraitSource = useMemo(
+    () => resolvePortraitSource(createPortraitId(ancestry ?? null, classId, genderId)),
+    [ancestry, classId, genderId],
+  )
+  const portraitGenderLabel = useMemo(() => {
+    if (!genderId) {
+      return null
+    }
+
+    if (genderId === "custom") {
+      const trimmed = customGenderLabel?.trim()
+      return trimmed && trimmed.length > 0 ? trimmed : "Custom"
+    }
+
+    return genderLabels[genderId]
+  }, [customGenderLabel, genderId])
 
   const expressionRegister = register("diceExpression", {
     onChange: () => {
@@ -163,6 +191,14 @@ function App() {
   return (
     <FormProvider {...form}>
       <main className="app-shell">
+        <section className="panel panel--span-2 hero-header">
+          <CharacterPortrait
+            source={portraitSource}
+            ancestryLabel={selectedRace?.label}
+            classLabel={classDefinition?.label}
+            genderLabel={portraitGenderLabel}
+          />
+        </section>
         <CharacterIdentitySection />
         <ClassSelectionSection />
         <CombatStatsSection />

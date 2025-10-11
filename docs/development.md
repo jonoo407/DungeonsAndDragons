@@ -38,6 +38,13 @@ Automated testing is not yet configured; rely on the following manual checks:
    - Switch to a prepared caster (Cleric, Druid, Wizard) and confirm the prepared-spell checkbox toggles without leaking to non-prepared classes.
    - Apply class defaults from the combat panel and verify hit dice / max HP update without overwriting custom current HP unless needed.
 5. Adjust combat fields (AC, HP, speed) to ensure min/max limits and HP > Max validation behave as expected.
+6. Verify the character portrait updates as ancestry, class, and gender selections change. Confirm the fallback image appears for unsupported combinations and that the layout stays responsive on narrow viewports.
+
+## Portrait Assets
+
+- Store portrait art in `public/portraits/` using the naming scheme `<ancestry>__<class>__<gender>.svg` (lowercase, kebab-case identifiers aligned with the schema enums). Partial fallbacks may omit class or gender segments (e.g. `dwarf.svg`, `fighter__male.svg`).
+- Prefer lightweight SVG illustrations or other text-based formats so pull requests avoid binary asset diffs. If you must commit raster art, keep the file under version control through Git LFS.
+- Run `npm run build` after adding art to ensure Vite picks up the new static files, and add a manifest entry in `src/lib/portraits.ts` so the resolver can find the asset.
 
 Additions to the dice parser or schema should include unit coverage (e.g., Vitest) in future iterations; see `docs/status.md` for current testing roadmap.
 
