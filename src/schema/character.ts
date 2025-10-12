@@ -169,8 +169,13 @@ export const diceMethodSchema = z.union([
 export const diceExpressionSchema = z
   .string()
   .trim()
-  .min(1, "Provide a dice expression")
-  .refine(isDiceExpressionValid, {
+  .refine((value) => {
+    // Only validate if the value is not empty
+    if (!value || value.length === 0) {
+      return true
+    }
+    return isDiceExpressionValid(value)
+  }, {
     message: "Use format like 4d6+2 or 3d8-1",
   })
 

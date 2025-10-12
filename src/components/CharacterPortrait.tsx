@@ -35,15 +35,27 @@ export const CharacterPortrait = ({
   genderLabel,
 }: CharacterPortraitProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
     setIsLoaded(false)
+    setHasError(false)
   }, [source.src])
 
   const altText = useMemo(
     () => createAltText(genderLabel, ancestryLabel, classLabel),
     [ancestryLabel, classLabel, genderLabel],
   )
+
+  const handleLoad = () => {
+    setIsLoaded(true)
+    setHasError(false)
+  }
+
+  const handleError = () => {
+    setIsLoaded(true)
+    setHasError(true)
+  }
 
   return (
     <figure className="character-portrait" aria-live="polite">
@@ -55,16 +67,22 @@ export const CharacterPortrait = ({
         {!isLoaded && (
           <div className="character-portrait__placeholder" aria-hidden="true" />
         )}
-        <img
-          key={source.src}
-          className="character-portrait__image"
-          src={source.src}
-          alt={altText}
-          role="img"
-          loading="lazy"
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setIsLoaded(true)}
-        />
+        {hasError ? (
+          <div className="character-portrait__error" aria-hidden="true">
+            <span>Portrait unavailable</span>
+          </div>
+        ) : (
+          <img
+            key={source.src}
+            className="character-portrait__image"
+            src={source.src}
+            alt={altText}
+            role="img"
+            loading="lazy"
+            onLoad={handleLoad}
+            onError={handleError}
+          />
+        )}
       </div>
       {source.attribution && (
         <figcaption className="character-portrait__attribution">
