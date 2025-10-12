@@ -2,6 +2,7 @@ import { z } from "zod"
 import {
   abilityScoreDefaultValue,
   abilityScoreKeys,
+  abilityScoreLabels,
   classIds,
   defaultDiceExpression,
   genderIds,
@@ -21,6 +22,9 @@ import {
   isSubclassValid,
 } from "../lib/classes"
 import { isDiceExpressionValid } from "../lib/dice"
+import { getRaceDefinition } from "../lib/races"
+
+const MAX_ABILITY_SCORE = 30
 
 export const abilityScoresSchema = z.object({
   strength: z.number().int().min(1).max(30),
@@ -227,6 +231,26 @@ export const characterFormSchema = z.object({
   identity: characterIdentitySchema,
   classSelection: classSelectionSchema,
   combat: combatStatsSchema,
+}).superRefine((value, ctx) => {
+  // Validate that ability scores + racial bonuses don't exceed maximum
+  const race = getRaceDefinition(value.identity.ancestry)
+  if (!race) {
+    return
+  }
+
+  abilityScoreKeys.forEach((key) => {
+    const baseScore = value.abilityScores[key]
+    const bonus = race.abilityBonuses[key] ?? 0
+    const adjustedScore = baseScore + bonus
+
+    if (adjustedScore > MAX_ABILITY_SCORE) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["abilityScores", key],
+        message: `${abilityScoreLabels[key]} ${baseScore} + racial bonus +${bonus} exceeds maximum of ${MAX_ABILITY_SCORE}`,
+      })
+    }
+  })
 })
 
 export type CharacterFormInput = z.input<typeof characterFormSchema>
