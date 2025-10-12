@@ -189,7 +189,7 @@ export const CharacterIdentitySection = () => {
               id="custom-gender"
               type="text"
               placeholder="Genderfluid guardian"
-              {...register("identity.customGenderLabel", { shouldUnregister: true })}
+              {...register("identity.customGenderLabel")}
             />
             {getError("customGenderLabel") && (
               <p className="field__error">{getError("customGenderLabel")}</p>

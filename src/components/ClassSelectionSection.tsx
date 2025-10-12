@@ -96,20 +96,21 @@ export const ClassSelectionSection = () => {
       const storedPreparation = preparationMemory.current[nextClass]
       const shouldPrepare = hasPreparedSpellcasting(nextClass)
 
+      // Batch all setValue calls to prevent race conditions
       setValue("classSelection.subclassId", nextSubclass, {
         shouldDirty: true,
-        shouldValidate: true,
+        shouldValidate: false, // Defer validation until all values are set
       })
       setValue("classSelection.fightingStyleId", nextFightingStyle, {
         shouldDirty: true,
-        shouldValidate: true,
+        shouldValidate: false, // Defer validation until all values are set
       })
       setValue(
         "classSelection.preparesSpells",
         shouldPrepare ? storedPreparation ?? true : false,
         {
           shouldDirty: true,
-          shouldValidate: true,
+          shouldValidate: true, // Only validate the last setValue call
         },
       )
       clearErrors([
