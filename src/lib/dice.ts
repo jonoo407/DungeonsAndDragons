@@ -63,7 +63,9 @@ const roll3d6RerollOnes = (random: RandomFn = defaultRandom) => {
 const MAX_DICE_COUNT = 100
 const MAX_DICE_SIDES = 1000
 
-const DICE_TOKEN_REGEX = /^([1-9][0-9]*|)d([1-9][0-9]*)$/i
+// Matches dice expressions like "d6", "2d20", "1d100" but rejects "d1" and "d0"
+// Sides part: ([2-9]|[1-9][0-9]+) matches 2-9 or any number with 2+ digits (10, 11, ...)
+const DICE_TOKEN_REGEX = /^([1-9][0-9]*|)d([2-9]|[1-9][0-9]+)$/i
 
 export const parseDiceExpression = (expression: string): ParsedDiceExpression | null => {
   const sanitized = expression.replace(/\s+/g, "").toLowerCase()
@@ -121,12 +123,20 @@ export const parseDiceExpression = (expression: string): ParsedDiceExpression | 
         return null
       }
 
-      if (sides <= 1 || sides > MAX_DICE_SIDES) {
+      // Reject dice with less than 2 sides (d0, d1) or more than MAX_DICE_SIDES
+      // Note: The regex should already prevent d0 and d1, but we double-check here
+      if (sides < 2 || sides > MAX_DICE_SIDES) {
         return null
       }
 
       parsed.push({ kind: "dice", count, sides, sign })
       continue
+    }
+
+    // If the token contains 'd', it should have matched the dice regex above
+    // If it didn't match, it's an invalid dice expression (e.g., "1d1", "2d0")
+    if (token.includes("d")) {
+      return null
     }
 
     const constantValue = Number.parseInt(token, 10)
