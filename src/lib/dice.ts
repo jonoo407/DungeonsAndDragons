@@ -129,6 +129,10 @@ export const parseDiceExpression = (expression: string): ParsedDiceExpression | 
       continue
     }
 
+    if (!/^\d+$/.test(token)) {
+      return null
+    }
+
     const constantValue = Number.parseInt(token, 10)
     if (!Number.isFinite(constantValue)) {
       return null
